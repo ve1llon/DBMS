@@ -1,0 +1,243 @@
+---Task2
+
+---Ex1_1_подзапросы
+                                     
+/*SELECT sum(ifnull( (
+                       SELECT sum(UnitPrice) 
+                         FROM sales_items,
+                              sales
+                        WHERE sales.SalesId = sales_items.SalesId AND 
+                              SalesDate >= date("2012-01-01") AND 
+                              SalesDate < date("2012-04-01") AND 
+                              ShipCountry = "USA"
+                   ), 0) ) AS sum;*/
+
+
+
+
+---Ex1_2_джоины
+
+/*SELECT sum(ifnull( (
+                       SELECT sum(UnitPrice) 
+                         FROM sales_items
+                              INNER JOIN
+                              sales ON sales.SalesId = sales_items.SalesId
+                        WHERE SalesDate >= date("2012-01-01") AND 
+                              SalesDate < date("2012-04-01") AND 
+                              ShipCountry = "USA"
+                   ), 0) ) AS sum;*/
+
+
+
+
+---Ex2_1_подзапросы
+
+/*SELECT FirstName
+  FROM customers
+ WHERE ( (
+             SELECT count(*)
+               FROM customers AS c,
+                    employees AS e
+              WHERE c.FirstName = e.FirstName AND 
+                    c.LastName = e.LastName
+         )
+=      0);*/
+
+
+
+
+---Ex2_2_джоины
+
+/*SELECT FirstName
+  FROM customers
+ WHERE ( (
+             SELECT count( * ) 
+               FROM customers AS c
+                    INNER JOIN
+                    employees AS e ON (c.FirstName = e.FirstName AND 
+                                       c.LastName = e.LastName) 
+         )
+=      0);*/
+
+
+
+
+---Ex2_3_лог_вычитание
+
+/*SELECT FirstName
+  FROM (
+           SELECT FirstName,
+                  LastName
+             FROM customers
+           EXCEPT
+           SELECT FirstName,
+                  LastName
+             FROM employees
+       );*/
+
+
+
+
+---Ex3 Теоретический вопрос
+
+/*Нет, второй запрос вернёт больше строк. Это происходит, тк в случае неволнения условия WHERE, мы не получаем эти строки. 
+А в случае ON строки из первой таблицы попадет в результат в любом случае*/
+
+
+
+
+---Ex4_1_подзапросы
+
+/*SELECT a.Title,
+       (
+           SELECT count(AlbumId) 
+             FROM tracks AS t
+             where t.AlbumId = a.AlbumId
+       )
+       AS cnt
+  FROM albums AS a
+  GROUP By a.AlbumId*/
+
+
+
+
+---Ex4_1_джоины
+
+/*SELECT a.AlbumId,
+       count(a.AlbumId) as cnt
+  FROM albums AS a
+       INNER JOIN
+       tracks AS t ON a.AlbumId = t.AlbumId
+ GROUP BY a.AlbumID;*/
+
+
+
+
+---Ex5
+
+/*SELECT LastName, FirstName
+  FROM customers AS a
+       INNER JOIN
+       sales AS s ON a.CustomerId = s.CustomerId
+ WHERE Country = "Germany" AND 
+       ShipCity = "Berlin" AND 
+       SalesDate >= date("2009-01-01") AND 
+       SalesDate < date("2010-01-01");*/
+
+
+
+
+---Ex6_1_джоины
+
+/*SELECT c.LastName
+  FROM customers AS c
+       INNER JOIN
+       (
+           SELECT *
+             FROM tracks AS t
+                  INNER JOIN
+                  (
+                      SELECT *
+                        FROM sales AS s
+                             INNER JOIN
+                             sales_items AS s_it ON s.SalesId = s_it.SalesId
+                  )
+                  AS full_s ON t.TrackId = full_s.TrackId
+       )
+       AS st ON c.CustomerId = st.CustomerId
+ GROUP BY c.CustomerId
+HAVING count(st.TrackId) > 30;*/
+ 
+
+
+
+---Ex6_2_подзапросы
+
+/*SELECT LastName
+  FROM (
+           SELECT CustomerId,
+                  LastName,
+                  count(TrackId) AS cnt
+             FROM (
+                      SELECT c.CustomerId,
+                             c.LastName,
+                             s.SalesId,
+                             st.TrackId
+                        FROM customers AS c,
+                             sales AS s,
+                             sales_items AS st
+                       WHERE c.CustomerId = s.CustomerId AND 
+                             s.SalesId = st.SalesId
+                  )
+            GROUP BY CustomerId
+           HAVING cnt > 30
+       );*/
+
+
+
+
+---Ex7
+
+/*SELECT Name,
+       sum(UnitPrice) / count(UnitPrice) AS mean
+  FROM (
+           SELECT g.Name,
+                  t.UnitPrice
+             FROM genres AS g
+                  INNER JOIN
+                  tracks AS t ON g.GenreId = t.GenreId
+       )
+ GROUP BY Name;*/
+
+
+
+---Ex8
+
+/*SELECT Name
+  FROM (
+           SELECT g.Name,
+                  t.UnitPrice
+             FROM genres AS g
+                  INNER JOIN
+                  tracks AS t ON g.GenreId = t.GenreId
+       )
+ GROUP BY Name
+ HAVING sum(UnitPrice) / count(UnitPrice) > 1*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
