@@ -1,0 +1,143 @@
+--Ex1
+
+/*SELECT LastName,
+       FirstName
+  FROM customers
+ WHERE City = "Prague";
+
+*/
+
+--Ex2.1 Проверяем, что имя начинается с M
+
+/*SELECT LastName,
+       FirstName
+  FROM customers
+ WHERE FirstName LIKE "M%";
+*/
+
+--Ex2.2 Проверяем, что имя содержит ch
+
+/*SELECT LastName,
+       FirstName
+  FROM customers
+ WHERE FirstName LIKE "%сh%";
+*/
+
+--Ex3
+
+/*SELECT Name,
+       Bytes / 1048576 as "Mbytes"
+  FROM tracks;
+*/
+
+
+
+--Ex4
+
+/*SELECT LastName,
+       FirstName
+  FROM employees
+ WHERE HireDate >= date("2002-01-01") AND 
+       HireDate < date("2003-01-01") AND 
+       City = "Calgary";
+*/
+
+--Ex5
+
+/*SELECT LastName,
+       FirstName
+  FROM employees
+ WHERE HireDate - BirthDate >= 40;
+*/
+
+--Ex6
+
+/*SELECT *
+  FROM customers
+ WHERE Country = "USA" AND 
+       Fax IS NULL;
+*/
+
+--Ex7 
+
+/*SELECT ShipCity
+  FROM sales
+ WHERE ShipCountry = "Canada" AND 
+       ( (SalesDate LIKE "%-08-%") OR 
+         (SalesDate LIKE "%-09-%") );
+*/
+
+--Ex8
+
+/*SELECT *
+  FROM customers
+ WHERE Email LIKE "%@gmail.com";
+*/
+
+--Ex9
+
+/*SELECT *
+  FROM employees
+ WHERE date("now") - HireDate >= 18;
+*/
+
+--Ex10
+
+/*SELECT Title
+  FROM employees
+ GROUP BY Title
+ ORDER BY Title;
+*/
+ 
+
+
+--Ex11
+
+/*SELECT LastName,
+       FirstName,
+       strftime("%Y", "now") - Age as "BirthYear"
+  FROM customers
+ ORDER BY LastName,
+          FirstName,
+          strftime("%Y", "now") - Age;
+*/
+
+
+--Ex12
+
+/*SELECT Milliseconds / 1000 as "Seconds"
+  FROM tracks
+ ORDER BY Milliseconds
+ LIMIT 1;
+*/
+
+--Ex13
+
+/*SELECT Name, Milliseconds / 1000 as "Seconds"
+  FROM tracks
+ ORDER BY Milliseconds
+ LIMIT 1;
+*/
+
+--Ex14
+
+/*SELECT Country,
+       avg(Age) 
+  FROM customers
+ GROUP BY Country;
+*/
+
+--Ex15
+
+/*SELECT LastName
+  FROM employees
+ WHERE date(HireDate) LIKE "%-10-%";
+*/
+
+--Ex16
+
+/*SELECT LastName
+  FROM employees
+ ORDER BY (date(HireDate) - date(BirthDate) ) DESC
+ LIMIT 1;
+*/

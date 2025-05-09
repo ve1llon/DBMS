@@ -1,0 +1,144 @@
+---Ex1
+--- ОТВЕТ: 1
+
+/*SELECT MIN(cnt) 
+  FROM (
+           SELECT user_id,
+                  count(time) AS cnt
+             FROM (
+                      LOG AS L
+                      INNER JOIN
+                      (
+                          SELECT user_id1 AS id,
+                                 min_time,
+                                 min_bet_time
+                            FROM (
+                                     SELECT user_id AS user_id1,
+                                            MIN(time) AS min_time
+                                       FROM LOG
+                                      GROUP BY user_id1
+                                 )
+                                 INNER JOIN
+                                 (
+                                     SELECT user_id AS user_id2,
+                                            MIN(time) AS min_bet_time
+                                       FROM LOG
+                                      WHERE bet
+                                      GROUP BY user_id2
+                                 )
+                                 ON user_id1 = user_id2
+                      )
+                      ON L.user_id = id
+                  )
+            WHERE time BETWEEN min_time AND min_bet_time
+            GROUP BY user_id
+       );*/
+
+
+---Ex2
+---ОТВЕТ: 39
+
+/*SELECT sum(percent) / count(percent) as mean_perc
+  FROM (
+           SELECT id1 AS id,
+                  cnt_win * 100 / cnt_bet AS percent
+             FROM (
+                      (
+                          SELECT user_id AS id1,
+                                 count(bet) AS cnt_bet
+                            FROM LOG
+                           WHERE bet
+                           GROUP BY user_id
+                      )
+                      INNER JOIN
+                      (
+                          SELECT user_id AS id2,
+                                 count(win) AS cnt_win
+                            FROM LOG
+                           WHERE win
+                           GROUP BY user_id
+                      )
+                      ON id1 = id2
+                  )
+       );*/
+       
+
+
+
+---Ex3
+
+/*SELECT user_id,
+       sum(win) - sum(bet) as bal
+  FROM LOG
+ GROUP BY user_id;*/
+
+
+
+
+---Ex4 *считаю, чот максмимальная выгода - это максимальная разница win - bet
+--- ОТВЕТ: Москва
+
+/*SELECT geo
+  FROM (
+           SELECT geo,
+                  MAX(rise) 
+             FROM (
+                      SELECT geo,
+                             sum(win) - sum(bet) AS rise
+                        FROM LOG AS L
+                             INNER JOIN
+                             USERS AS U ON L.user_id = U.user_id
+                       GROUP BY geo
+                  )
+       );*/
+
+
+
+
+---Ex5
+--- ОТВЕТ: Москва
+
+/*SELECT geo
+  FROM (
+           SELECT geo,
+                  MAX(bet) 
+             FROM LOG AS L
+                  INNER JOIN
+                  USERS AS U ON L.user_id = U.user_id
+            WHERE bet
+       );*/
+       
+
+
+
+---Ex6 
+---ОТВЕТ: 4045507 секунд - это примерно 47 дней
+
+/*SELECT sum(time_diff) / count(time_diff) as time_seconds
+  FROM (
+        SELECT user_id1 AS id,
+                  min_bet_time - min_time AS time_diff
+             FROM ((
+                      SELECT user_id AS user_id1,
+                             MIN(strftime('%s', time) ) AS min_time
+                        FROM LOG
+                       GROUP BY user_id1
+                  )
+                  INNER JOIN
+                  (
+                      SELECT user_id AS user_id2,
+                             MIN(strftime('%s', time) ) AS min_bet_time
+                        FROM LOG
+                       WHERE bet
+                       GROUP BY user_id2
+                  )
+                  ON user_id1 = user_id2)   
+       );*/
+
+
+
+
+
+
+
+
